@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gym Las Américas Hatillo · Control de membresías (demo)</title>
+<meta name="description" content="Demo navegable de control de membresías, cobros y accesos para Gym Las Américas Hatillo.">
+<style>
+:root{
+  --navy:#06182c; --navy2:#0b2745; --navy3:#123a63;
+  --ink:#0d1c2e; --gray:#5c6d82; --line:#e1e8f2; --bg:#f2f6fb; --card:#ffffff;
+  --y:#ffc61a; --y2:#ffe08a; --ydark:#8a6500;
+  --ok:#0c7a52; --okbg:#e6f7ee; --warn:#a06700; --warnbg:#fff4d9;
+  --bad:#b3261e; --badbg:#fdecea; --frz:#41597a; --frzbg:#edf2f8;
+  --blue:#12558f; --wa:#128c7e;
+  --shadow:0 1px 2px rgba(6,24,44,.05),0 10px 26px rgba(6,24,44,.07);
+  --r:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background:var(--bg); color:var(--ink); font-size:14.5px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;letter-spacing:-.015em;font-weight:800}
+p{margin:0}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--blue)}
+svg{display:block}
+.num{font-variant-numeric:tabular-nums}
+
+/* ================= LANDING ================= */
+.landing{
+  position:fixed;inset:0;z-index:120;overflow-y:auto;
+  background:
+    radial-gradient(900px 520px at 82% -8%, rgba(255,198,26,.18), transparent 60%),
+    radial-gradient(700px 500px at -10% 108%, rgba(18,85,143,.55), transparent 62%),
+    linear-gradient(160deg,#05162a 0%,#0b2745 58%,#0a2038 100%);
+  display:flex;align-items:center;justify-content:center;padding:28px 20px;
+}
+.landing.out{display:none}
+.lwrap{width:100%;max-width:1060px;display:grid;grid-template-columns:1.08fr .92fr;gap:44px;align-items:center}
+.lcopy .mark{
+  width:58px;height:58px;border-radius:17px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(150deg,var(--y),#e8a900);box-shadow:0 12px 30px rgba(255,198,26,.28);margin-bottom:20px;
+}
+.lcopy .mark svg{width:32px;height:32px;stroke:#0a1d33}
+.ltag{
+  display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:800;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--y);background:rgba(255,198,26,.12);border:1px solid rgba(255,198,26,.28);
+  padding:6px 11px;border-radius:999px;
+}
+.lcopy h1{font-size:clamp(32px,4.5vw,52px);line-height:1.04;color:#fff;margin:16px 0 0;letter-spacing:-.03em}
+.lcopy h1 em{font-style:normal;color:var(--y)}
+.lcopy .sub{color:#b9cadc;font-size:16px;margin-top:16px;max-width:520px;line-height:1.6}
+.lbtns{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);
+  background:#fff;color:var(--ink);border-radius:11px;padding:11px 16px;font-size:13.5px;font-weight:700;
+  transition:.15s;text-decoration:none;
+}
+.btn svg{width:16px;height:16px;flex:none}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.primary{background:var(--navy2);border-color:var(--navy2);color:#fff}
+.btn.yellow{background:var(--y);border-color:var(--y);color:#0a1d33;box-shadow:0 8px 22px rgba(255,198,26,.28)}
+.btn.yellow:hover{background:#ffd04d}
+.btn.ghost-l{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);color:#fff}
+.btn.ghost-l:hover{background:rgba(255,255,255,.14)}
+.btn.sm{padding:7px 11px;font-size:12.5px;border-radius:9px}
+.btn.tiny{padding:5px 9px;font-size:11.5px;border-radius:8px;gap:5px}
+.btn.tiny svg{width:13px;height:13px}
+.btn:disabled{opacity:.42;cursor:not-allowed;transform:none}
+.btn.wa{background:#e8f7f3;border-color:#bfe6dd;color:#0b6b5f}
+.btn.danger{background:#fff;border-color:#f0c9c6;color:var(--bad)}
+.lfeats{display:flex;flex-wrap:wrap;gap:16px;margin-top:28px}
+.lfeats span{display:inline-flex;align-items:center;gap:7px;color:#c8d7e8;font-size:12.5px;font-weight:600}
+.lfeats svg{width:15px;height:15px;stroke:var(--y)}
+.llegal{color:#7d93aa;font-size:11.5px;margin-top:30px;border-top:1px solid rgba(255,255,255,.1);padding-top:16px;max-width:520px}
+
+.lcard{
+  background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:20px;
+  backdrop-filter:blur(10px);box-shadow:0 30px 70px rgba(0,0,0,.34);
+}
+.lcard .lh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.lcard .lh b{color:#fff;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:800}
+.lcard .lh span{font-size:10.5px;color:#0a1d33;background:var(--y);border-radius:999px;padding:3px 8px;font-weight:800}
+.lkpis{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.lkpi{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 12px}
+.lkpi small{display:block;color:#a9bdd2;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.lkpi b{display:block;color:#fff;font-size:20px;margin-top:3px;letter-spacing:-.02em}
+.lkpi b i{color:var(--y);font-style:normal}
+.lrow{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid rgba(255,255,255,.09);margin-top:8px}
+.lrow .dot{width:7px;height:7px;border-radius:50%;background:var(--y);flex:none}
+.lrow p{color:#c3d3e4;font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lrow b{color:#fff;font-size:12px}
+
+/* ================= SHELL ================= */
+.app{display:none;min-height:100vh}
+.app.on{display:flex}
+.side{
+  width:246px;flex:none;background:linear-gradient(185deg,var(--navy) 0%,var(--navy2) 100%);
+  color:#cdd9e6;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:60;
+}
+.side .brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.side .logo{display:flex;align-items:center;gap:10px}
+.side .mark{
+  width:38px;height:38px;border-radius:11px;background:linear-gradient(150deg,var(--y),#e2a600);
+  display:flex;align-items:center;justify-content:center;flex:none;
+}
+.side .mark svg{width:21px;height:21px;stroke:#0a1d33}
+.side .logo b{display:block;color:#fff;font-size:13.5px;line-height:1.25}
+.side .logo small{display:block;color:#8ba2ba;font-size:10.5px;margin-top:2px}
+.nav{padding:12px 10px;display:flex;flex-direction:column;gap:2px;flex:1;overflow-y:auto}
+.nav button{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:none;border:0;
+  color:#b6c7d9;padding:10px 11px;border-radius:10px;font-size:13px;font-weight:600;transition:.14s;position:relative;
+}
+.nav button svg{width:17px;height:17px;flex:none;opacity:.85}
+.nav button:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav button.active{background:rgba(255,198,26,.13);color:#fff}
+.nav button.active svg{stroke:var(--y);opacity:1}
+.nav button.active::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--y)}
+.nav .sep{height:1px;background:rgba(255,255,255,.08);margin:9px 6px}
+.side .foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.08);font-size:10.5px;color:#7f95ad;line-height:1.5}
+
+.main{flex:1;margin-left:246px;min-width:0;display:flex;flex-direction:column}
+.top{
+  position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(9px);
+  border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:11px 24px;
+}
+.top .crumb{font-size:12.5px;color:var(--gray);font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top .who{display:flex;align-items:center;gap:10px}
+.av{
+  width:33px;height:33px;border-radius:50%;background:var(--navy2);color:var(--y);display:flex;
+  align-items:center;justify-content:center;font-size:11.5px;font-weight:800;flex:none;letter-spacing:.02em;
+}
+.top .who .whotxt{font-size:12px;line-height:1.25}
+.top .who .whotxt b{display:block;font-size:12.5px}
+.top .who .whotxt small{display:block;color:var(--gray);font-size:10.5px}
+.menu-btn{display:none;background:#fff;border:1px solid var(--line);border-radius:9px;padding:7px;color:var(--ink)}
+.menu-btn svg{width:19px;height:19px}
+
+.content{padding:22px 24px 44px;max-width:1290px;width:100%}
+.sec{display:none}
+.sec.on{display:block;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+.page-title{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.page-title h2{font-size:23px;letter-spacing:-.025em}
+.page-title p{font-size:12.5px;color:var(--gray);margin-top:3px}
+
+/* ================= CARDS / GRID ================= */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.card + .card{margin-top:14px}
+.card .hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 17px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.card .hd h3{font-size:14.5px}
+.card .hd .hint{font-size:11.5px;color:var(--gray);font-weight:500}
+.card .bd{padding:16px 17px}
+.card .bd.flush{padding:0}
+.grid{display:grid;gap:13px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 15px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.kpi::after{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line)}
+.kpi.y::after{background:var(--y)}
+.kpi.ok::after{background:var(--ok)}
+.kpi.warn::after{background:#e09a00}
+.kpi.bad::after{background:var(--bad)}
+.kpi .kl{font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--gray);display:flex;align-items:center;gap:6px}
+.kpi .kl svg{width:14px;height:14px;stroke:var(--gray)}
+.kpi .kv{font-size:25px;font-weight:800;letter-spacing:-.03em;margin-top:6px;line-height:1.1}
+.kpi .kv small{font-size:12.5px;font-weight:700;color:var(--gray);letter-spacing:0}
+.kpi .ks{font-size:11.5px;color:var(--gray);margin-top:4px}
+.kpi.click{cursor:pointer;transition:.15s}
+.kpi.click:hover{border-color:#cbd8e8;transform:translateY(-1px)}
+
+/* pills / chips */
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;padding:3px 8px;border-radius:999px;white-space:nowrap;letter-spacing:.01em}
+.pill .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.p-ok{background:var(--okbg);color:var(--ok)}
+.p-warn{background:var(--warnbg);color:var(--warn)}
+.p-bad{background:var(--badbg);color:var(--bad)}
+.p-frz{background:var(--frzbg);color:var(--frz)}
+.p-blue{background:#e8f0fa;color:var(--blue)}
+.p-y{background:#fff8e0;color:#8a6500}
+.p-gray{background:#f1f4f8;color:#5b6b80}
+.p-wa{background:#e6f6f2;color:#0b6b5f}
+
+/* table */
+.tw{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:640px}
+thead th{
+  text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--gray);
+  font-weight:800;padding:10px 14px;background:#f8fafd;border-bottom:1px solid var(--line);white-space:nowrap;
+}
+tbody td{padding:11px 14px;border-bottom:1px solid #eef3f9;vertical-align:middle}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover{background:#fafcff}
+tbody tr.sel{background:#fff9e6}
+td .nm{font-weight:700;font-size:13px;display:block}
+td .sub{font-size:11px;color:var(--gray)}
+td.r,th.r{text-align:right}
+.mono{font-variant-numeric:tabular-nums}
+.linkish{background:none;border:0;color:var(--blue);font-weight:700;font-size:12px;padding:0;text-decoration:underline;text-underline-offset:2px}
+
+.search{position:relative;flex:1;min-width:170px;max-width:290px}
+.search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--gray)}
+.search input{
+  width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 11px 9px 32px;font-size:13px;
+  font-family:inherit;background:#fbfcfe;color:var(--ink);
+}
+.search input:focus{outline:2px solid rgba(18,85,143,.18);border-color:#a9c3dd;background:#fff}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* notices */
+.aviso{display:flex;gap:10px;align-items:flex-start;border-radius:12px;padding:12px 14px;font-size:12.5px;border:1px solid;margin-bottom:13px}
+.aviso svg{width:18px;height:18px;flex:none;margin-top:1px}
+.aviso b{font-weight:800}
+.aviso.ok{background:var(--okbg);border-color:#c8e9d9;color:#0a5f41}
+.aviso.warn{background:var(--warnbg);border-color:#f2dfae;color:#7a5000}
+.aviso.bad{background:var(--badbg);border-color:#f3cdc9;color:#8f1e17}
+.aviso.info{background:#eaf2fb;border-color:#cfe0f2;color:#0f4573}
+
+/* empty */
+.empty{text-align:center;padding:30px 16px;color:var(--gray);font-size:13px}
+.empty svg{width:32px;height:32px;stroke:#b9c8d9;margin:0 auto 9px}
+
+/* ================= TOUR ================= */
+.tour-dim{position:fixed;inset:0;z-index:90;pointer-events:none;background:transparent}
+.tour-spot{
+  position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(4,14,26,.78),0 0 0 3px var(--y),0 0 0 8px rgba(255,198,26,.18);
+  z-index:91;pointer-events:none;transition:all .26s ease;
+}
+.tour-card{
+  position:fixed;z-index:92;background:#fff;border-radius:16px;max-width:400px;width:calc(100% - 28px);
+  padding:17px 18px 16px;box-shadow:0 24px 60px rgba(0,0,0,.42);border-top:3px solid var(--y);
+}
+.tour-card .step{font-size:10.5px;font-weight:800;color:var(--ydark);text-transform:uppercase;letter-spacing:.1em}
+.tour-card h3{font-size:16.5px;margin:6px 0 7px;color:var(--navy2)}
+.tour-card p{margin:0;font-size:12.8px;color:var(--gray);line-height:1.55}
+.tour-card .navrow{display:flex;align-items:center;gap:7px;margin-top:15px;flex-wrap:wrap}
+.tour-card .navrow .sp{flex:1;min-width:0}
+.tour-card .prog{height:4px;border-radius:3px;background:#eef2f7;margin-top:13px;overflow:hidden;display:none}
+.tour-card .prog.on{display:block}
+.tour-card .prog i{display:block;height:100%;background:var(--y);width:0}
+.tour-close{
+  position:fixed;top:14px;right:14px;z-index:93;background:#fff;border:0;border-radius:999px;
+  padding:9px 14px;font-size:12.5px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.3);color:var(--ink);
+}
+
+/* vencimiento cards */
+.avrow{display:flex;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid #eef3f9;flex-wrap:wrap}
+.avrow:last-child{border-bottom:0}
+.avrow .who2{flex:1;min-width:150px}
+.avrow .who2 b{font-size:13px;display:block}
+.avrow .who2 small{font-size:11px;color:var(--gray);display:block;margin-top:1px}
+.avrow .days{font-size:12px;font-weight:800;min-width:74px;text-align:center}
+
+/* inside list */
+.inrow{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid #eef3f9}
+.inrow:last-child{border-bottom:0}
+.inrow .av2{width:32px;height:32px;border-radius:50%;background:#eef3f9;color:var(--navy2);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.inrow .who3{flex:1;min-width:0}
+.inrow .who3 b{font-size:12.8px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inrow .who3 small{font-size:11px;color:var(--gray)}
+.inrow.bad{background:#fff6f5}
+.inrow.bad .av2{background:#fbdcd9;color:var(--bad)}
+
+/* clases */
+.clase{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.clase .ct{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.clase b{font-size:13px;display:block}
+.clase .ch{font-size:11.5px;color:var(--gray);margin-top:2px}
+.clase .cbar{height:6px;border-radius:4px;background:#eef3f9;margin-top:10px;overflow:hidden}
+.clase .cbar i{display:block;height:100%;border-radius:4px;background:var(--navy3)}
+.clase.full .cbar i{background:var(--bad)}
+.clase.warn .cbar i{background:#e09a00}
+.clase .cf{display:flex;justify-content:space-between;font-size:11px;color:var(--gray);margin-top:5px;font-weight:600}
+.daycol{display:flex;flex-direction:column;gap:9px}
+.daycol .dname{font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--gray);padding-bottom:2px;border-bottom:2px solid var(--y);align-self:flex-start}
+
+/* modal */
+.scrim-m{position:fixed;inset:0;background:rgba(5,17,31,.6);z-index:100;display:none;backdrop-filter:blur(2px)}
+.scrim-m.on{display:block}
+.modal{
+  position:fixed;z-index:101;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;border-radius:18px;
+  width:calc(100% - 28px);max-width:560px;max-height:88vh;overflow-y:auto;display:none;box-shadow:0 30px 80px rgba(0,0,0,.4);
+}
+.modal.on{display:block}
+.modal .mh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:sticky;top:0;background:#fff;z-index:2}
+.modal .mh h3{font-size:16px}
+.modal .mh small{display:block;font-size:11.5px;color:var(--gray);font-weight:500;margin-top:2px}
+.modal .mh button{background:#f1f5fa;border:0;border-radius:8px;padding:6px;color:var(--gray)}
+.modal .mh button svg{width:16px;height:16px}
+.modal .mb{padding:16px 18px}
+.modal .mf{padding:13px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;position:sticky;bottom:0;background:#fff}
+
+/* forms */
+.field{margin-bottom:11px}
+.field label{display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--gray);margin-bottom:5px}
+.field input,.field select,.field textarea{
+  width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 11px;font-size:13.5px;
+  font-family:inherit;background:#fbfcfe;color:var(--ink);
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid rgba(18,85,143,.16);border-color:#a9c3dd;background:#fff}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* receipt */
+.recibo{border:1px dashed #c6d4e4;border-radius:12px;padding:15px;background:#fbfdff}
+.recibo .rh{text-align:center;border-bottom:1px dashed #d3dfec;padding-bottom:10px;margin-bottom:10px}
+.recibo .rh b{font-size:13px;display:block;letter-spacing:.03em}
+.recibo .rh small{font-size:10.5px;color:var(--gray)}
+.recibo .rl{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+.recibo .rl span{color:var(--gray)}
+.recibo .rl b{font-variant-numeric:tabular-nums}
+.recibo .tot{border-top:1px dashed #d3dfec;margin-top:8px;padding-top:8px;font-size:14px}
+.recibo .tot b{font-size:16px}
+
+/* charts */
+.chart{width:100%;height:auto;overflow:visible}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--gray);margin-top:10px;font-weight:600}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block;margin-right:5px}
+
+/* toast */
+#toast{
+  position:fixed;left:50%;bottom:22px;transform:translate(-50%,18px);background:var(--navy);color:#fff;
+  padding:11px 16px;border-radius:11px;font-size:12.5px;font-weight:600;z-index:140;opacity:0;
+  transition:.22s;pointer-events:none;max-width:calc(100% - 28px);box-shadow:0 12px 34px rgba(0,0,0,.3);
+}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:980px){
+  .lwrap{grid-template-columns:1fr;gap:26px;max-width:560px}
+  .lcard{order:2}
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:860px){
+  .side{transform:translateX(-100%);transition:transform .22s ease;width:262px}
+  .side.open{transform:none}
+  .main{margin-left:0}
+  .menu-btn{display:block}
+  .content{padding:16px 14px 40px}
+  .top{padding:10px 14px}
+  .top .who .whotxt{display:none}
+  .scrim{position:fixed;inset:0;background:rgba(4,14,26,.5);z-index:55;display:none}
+  .scrim.on{display:block}
+}
+@media(max-width:700px){
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .page-title h2{font-size:20px}
+  .kpi .kv{font-size:22px}
+  .tour-card{max-width:none;padding:15px 15px 14px}
+  .frow{grid-template-columns:1fr}
+  .landing{padding:22px 16px;align-items:flex-start}
+  .lcopy h1{font-size:31px}
+  .lfeats{gap:10px 14px}
+  .avrow .days{min-width:60px;text-align:left}
+  .modal{max-height:92vh;top:auto;bottom:0;transform:translateX(-50%);border-radius:18px 18px 0 0;max-width:100%;width:100%}
+}
+@media(max-width:420px){
+  .lkpis{grid-template-columns:1fr}
+  .card .hd{padding:12px 14px}
+  .card .bd{padding:14px}
+  thead th,tbody td{padding:9px 11px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LANDING ================= -->
+<div class="landing" id="landing">
+  <div class="lwrap">
+    <div class="lcopy">
+      <div class="mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9v6M21 9v6M6.5 6.5v11M17.5 6.5v11M6.5 12h11"/>
+        </svg>
+      </div>
+      <span class="ltag">Demo de sistema de membresías</span>
+      <h1>Las membresías y los cobros, <em>en orden</em>.</h1>
+      <p class="sub">Un solo lugar para saber quién está activo, a quién se le vence esta semana, qué quedó pendiente de pago y quién entró hoy al gimnasio. Este es un ejemplo navegable con datos ficticios de Hatillo.</p>
+      <div class="lbtns">
+        <button class="btn yellow" onclick="enterApp()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          Entrar al sistema
+        </button>
+        <button class="btn ghost-l" onclick="enterApp();setTimeout(startTour,300)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 8.5l6 3.5-6 3.5z"/></svg>
+          Ver el recorrido guiado
+        </button>
+      </div>
+      <div class="lfeats">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Vencimientos avisados a tiempo</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Cobros en efectivo, SINPE y tarjeta</span>
+      </div>
+      <div class="llegal">Demo de referencia hecho por Nocodeveloper. Los datos son de ejemplo.</div>
+    </div>
+
+    <div class="lcard">
+      <div class="lh"><b>Panel de hoy</b><span>DEMO</span></div>
+      <div class="lkpis">
+        <div class="lkpi"><small>Socios activos</small><b id="lp-activos">—</b></div>
+        <div class="lkpi"><small>Vencen esta semana</small><b id="lp-vencen">—</b></div>
+        <div class="lkpi"><small>Cobros pendientes</small><b id="lp-pend">—</b></div>
+        <div class="lkpi"><small>Ingresos del día</small><b id="lp-ing">—</b></div>
+      </div>
+      <div class="lrow"><span class="dot"></span><p id="lp-aviso">Recordatorios de renovación listos para enviar</p><b id="lp-aviso-n">—</b></div>
+      <div class="lrow"><span class="dot"></span><p id="lp-dentro">Entrenando ahora mismo</p><b id="lp-dentro-n">—</b></div>
+      <div class="lrow"><span class="dot"></span><p>Renovaciones recuperadas este mes</p><b id="lp-rec">—</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="scrim" id="scrim" onclick="toggleSide()"></div>
+
+<div class="app" id="app">
+  <aside class="side" id="side">
+    <div class="brand">
+      <div class="logo">
+        <div class="mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9v6M21 9v6M6.5 6.5v11M17.5 6.5v11M6.5 12h11"/>
+          </svg>
+        </div>
+        <div><b>Gym Las Américas</b><small>Hatillo · San José</small></div>
+      </div>
+    </div>
+    <nav class="nav" id="nav">
+      <button data-sec="panel" class="active" onclick="go('panel')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="3" width="7" height="9" rx="1.2"/><rect x="14" y="3" width="7" height="5" rx="1.2"/><rect x="14" y="12" width="7" height="9" rx="1.2"/><rect x="3" y="16" width="7" height="5" rx="1.2"/></svg>
+        Panel del día
+      </button>
+      <button data-sec="socios" onclick="go('socios')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.4 20c0-3.6 2.6-5.6 5.6-5.6s5.6 2 5.6 5.6"/><path d="M17 5.6a3 3 0 0 1 0 5.4M18.2 20c0-2.3-.8-3.9-2-4.9"/></svg>
+        Socios
+      </button>
+      <button data-sec="vencimientos" onclick="go('vencimientos')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2.2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M12 13v3M12 19h.01"/></svg>
+        Vencimientos y avisos
+      </button>
+      <button data-sec="cobros" onclick="go('cobros')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="2.5" y="6.5" width="19" height="12.5" rx="2.2"/><path d="M2.5 10.5h19"/><circle cx="17" cy="15" r="1.2"/></svg>
+        Cobros
+      </button>
+      <button data-sec="acceso" onclick="go('acceso')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/><path d="M10 8l4 4-4 4M14 12H3"/></svg>
+        Acceso
+      </button>
+      <button data-sec="clases" onclick="go('clases')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.2 2"/></svg>
+        Clases
+      </button>
+      <button data-sec="informes" onclick="go('informes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V11M10 20V4M16 20v-6M22 20H2"/></svg>
+        Informes
+      </button>
+      <div class="sep"></div>
+      <button onclick="startTour()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+        Recorrido guiado
+      </button>
+    </nav>
+    <div class="foot">Demo · datos de ejemplo<br>Hecho por Nocodeveloper</div>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <button class="menu-btn" onclick="toggleSide()" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="crumb" id="crumb">Gym Las Américas · Panel del día</div>
+      <div class="who">
+        <button class="btn sm" id="btn-tour" onclick="startTour()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+          Ver el recorrido guiado
+        </button>
+        <span class="av">MA</span>
+        <span class="whotxt"><b>María Alfaro</b><small>Recepción · Turno mañana</small></span>
+      </div>
+    </header>
+
+    <div class="content">

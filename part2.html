@@ -1,0 +1,190 @@
+      <!-- ================= PANEL ================= -->
+      <section class="sec on" id="sec-panel">
+        <div class="page-title">
+          <div>
+            <h2>Panel del día</h2>
+            <p id="today-label">Resumen de la jornada</p>
+          </div>
+          <div class="toolbar">
+            <button class="btn sm" onclick="go('acceso')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/><path d="M10 8l4 4-4 4M14 12H3"/></svg>
+              Registrar entrada
+            </button>
+            <button class="btn sm primary" onclick="go('cobros')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+              Registrar pago
+            </button>
+          </div>
+        </div>
+
+        <div id="panel-avisos"></div>
+
+        <div class="grid g4" id="tour-panel" style="margin-bottom:14px">
+          <div class="kpi y click" onclick="go('socios')">
+            <div class="kl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3.4 20c0-3.6 2.6-5.6 5.6-5.6s5.6 2 5.6 5.6"/></svg>Socios activos</div>
+            <div class="kv num" id="k-activos">—</div>
+            <div class="ks" id="k-activos-sub">—</div>
+          </div>
+          <div class="kpi warn click" onclick="go('vencimientos')">
+            <div class="kl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Vencen esta semana</div>
+            <div class="kv num" id="k-vencen">—</div>
+            <div class="ks" id="k-vencen-sub">—</div>
+          </div>
+          <div class="kpi bad click" onclick="go('cobros')">
+            <div class="kl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2.5" y="6.5" width="19" height="12.5" rx="2"/><path d="M2.5 10.5h19"/></svg>Cobros pendientes</div>
+            <div class="kv num" id="k-pend">—</div>
+            <div class="ks" id="k-pend-sub">—</div>
+          </div>
+          <div class="kpi ok">
+            <div class="kl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5"/></svg>Ingresos del día</div>
+            <div class="kv num" id="k-ing">—</div>
+            <div class="ks" id="k-ing-sub">—</div>
+          </div>
+        </div>
+
+        <div class="grid g2" style="margin-bottom:14px">
+          <div class="card">
+            <div class="hd">
+              <h3>Entrenando ahora</h3>
+              <span class="pill p-y"><span class="dot"></span><span id="p-dentro-n">0</span> dentro</span>
+            </div>
+            <div class="bd flush" id="panel-dentro"></div>
+          </div>
+          <div class="card">
+            <div class="hd">
+              <h3>Avisos por enviar</h3>
+              <button class="linkish" onclick="go('vencimientos')">Ver vencimientos</button>
+            </div>
+            <div class="bd flush" id="panel-avisos-lista"></div>
+          </div>
+        </div>
+
+        <div class="grid g2">
+          <div class="card">
+            <div class="hd">
+              <h3>Movimientos de caja de hoy</h3>
+              <span class="hint" id="p-mov-n">—</span>
+            </div>
+            <div class="bd flush" id="panel-caja"></div>
+          </div>
+          <div class="card">
+            <div class="hd">
+              <h3>Renovaciones recuperadas</h3>
+              <span class="pill p-ok"><span class="dot"></span>Mes en curso</span>
+            </div>
+            <div class="bd" id="panel-rec"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SOCIOS ================= -->
+      <section class="sec" id="sec-socios">
+        <div class="page-title">
+          <div>
+            <h2>Socios</h2>
+            <p>Ficha completa de cada miembro: plan, estado, vencimiento, saldo y contacto.</p>
+          </div>
+          <button class="btn sm primary" onclick="go('cobros')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Registrar pago
+          </button>
+        </div>
+
+        <div class="card" id="tour-socios">
+          <div class="hd">
+            <div class="toolbar" style="flex:1">
+              <div class="search">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+                <input id="q-socios" type="search" placeholder="Buscar por nombre o teléfono…" oninput="renderSocios()">
+              </div>
+              <select id="f-estado" onchange="renderSocios()" style="border:1px solid var(--line);border-radius:10px;padding:9px 10px;font-size:12.5px;background:#fbfcfe;font-family:inherit;color:var(--ink)">
+                <option value="">Todos los estados</option>
+                <option value="activo">Activos</option>
+                <option value="por vencer">Por vencer</option>
+                <option value="vencido">Vencidos</option>
+                <option value="congelado">Congelados</option>
+              </select>
+            </div>
+            <span class="hint" id="socios-count">—</span>
+          </div>
+          <div class="bd flush">
+            <div class="tw">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Socio</th><th>Plan</th><th>Estado</th><th>Vencimiento</th>
+                    <th class="r">Saldo</th><th>Teléfono</th><th></th>
+                  </tr>
+                </thead>
+                <tbody id="tb-socios"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="aviso info" style="margin-top:14px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+          <div>Toque cualquier socio para abrir su ficha con el historial de pagos, las asistencias del último mes y el estado de cuenta.</div>
+        </div>
+      </section>
+
+      <!-- ================= VENCIMIENTOS ================= -->
+      <section class="sec" id="sec-vencimientos">
+        <div class="page-title">
+          <div>
+            <h2>Vencimientos y avisos</h2>
+            <p>Quién vence pronto, a quién ya se le venció y a quién conviene escribirle hoy.</p>
+          </div>
+          <button class="btn sm wa" onclick="enviarTodos()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.7 7.3L3 20l1.3-5.1A8.5 8.5 0 1 1 21 11.5z"/></svg>
+            Preparar avisos del día
+          </button>
+        </div>
+
+        <div class="grid g4" style="margin-bottom:14px">
+          <div class="kpi warn">
+            <div class="kl">Vencen en 7 días</div>
+            <div class="kv num" id="v-7">—</div>
+            <div class="ks" id="v-7-sub">—</div>
+          </div>
+          <div class="kpi bad">
+            <div class="kl">Vencidos sin renovar</div>
+            <div class="kv num" id="v-venc">—</div>
+            <div class="ks" id="v-venc-sub">—</div>
+          </div>
+          <div class="kpi y">
+            <div class="kl">Avisos por enviar</div>
+            <div class="kv num" id="v-avisos">—</div>
+            <div class="ks">Recordatorios listos por WhatsApp</div>
+          </div>
+          <div class="kpi ok">
+            <div class="kl">Recuperadas este mes</div>
+            <div class="kv num" id="v-rec">—</div>
+            <div class="ks" id="v-rec-sub">—</div>
+          </div>
+        </div>
+
+        <div class="card" id="tour-vencimientos">
+          <div class="hd">
+            <h3>Membresías por vencer</h3>
+            <span class="hint">Ordenadas por días restantes · recordatorio por WhatsApp al +506 8841 9907</span>
+          </div>
+          <div class="bd flush" id="lista-porvencer"></div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <h3>Ya vencidos</h3>
+            <span class="hint" id="vencidos-hint">—</span>
+          </div>
+          <div class="bd flush" id="lista-vencidos"></div>
+        </div>
+
+        <div class="card" id="tour-recuperadas">
+          <div class="hd">
+            <h3>Renovaciones recuperadas del mes</h3>
+            <span class="pill p-ok"><span class="dot"></span><span id="rec-mes-label">—</span></span>
+          </div>
+          <div class="bd" id="rec-lista"></div>
+        </div>
+      </section>
