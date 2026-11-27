@@ -1480,11 +1480,12 @@ function mostrarComprobante(s, d){
 var WA_GYM = '50688419907';
 function mensajeRecordatorio(s){
   var dias = s.vence;
+  var d = Math.abs(dias);
   var cuerpo = dias < 0
-    ? 'Le saludamos de Gym Las Américas Hatillo. Su membresía venció hace ' + Math.abs(dias) + ' día(s) y nos gustaría ayudarle a reactivarla.'
+    ? 'Le saludamos de Gym Las Américas Hatillo. Su membresía venció hace ' + d + (d===1?' día':' días') + ' y nos gustaría ayudarle a reactivarla.'
     : dias === 0
       ? 'Le saludamos de Gym Las Américas Hatillo. Su membresía vence hoy.'
-      : 'Le saludamos de Gym Las Américas Hatillo. Su membresía vence en ' + dias + ' día(s).';
+      : 'Le saludamos de Gym Las Américas Hatillo. Su membresía vence en ' + dias + (dias===1?' día':' días') + '.';
   return 'Hola ' + s.nombre.split(' ')[0] + ', ' + cuerpo + ' Su plan es ' + PLANES[s.plan].n + ' (' + crc(PLANES[s.plan].p) + '). Puede renovar en recepción o por SINPE Móvil al +506 8841 9907. ¡Le esperamos!';
 }
 function maquetaWhatsApp(id){
